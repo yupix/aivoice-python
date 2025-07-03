@@ -1,0 +1,5 @@
+pythonnet>=3.0.0
+
+# Development dependencies
+build>=0.8.0
+twine>=4.0.0
