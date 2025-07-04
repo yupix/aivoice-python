@@ -211,7 +211,7 @@ class AIVoiceTTsControl:
 
     def get_voice_preset(self, preset_name: str) -> str:
         """引数で指定された名称のボイスプリセットの各値を JSON 形式で取得します。"""
-        return self.tts_control.VoicePreset(preset_name)
+        return self.tts_control.GetVoicePreset(preset_name)
 
     def initialize(self, service_name: str):
         """APIを初期化します。"""
@@ -249,7 +249,14 @@ class AIVoiceTTsControl:
         self.tts_control.RemoveListItem(index)
 
     def save_audio_to_file(self, path: str) -> None:
-        """テキストの読み上げ音声を指定されたファイルに保存します。"""
+        """テキストの読み上げ音声を指定されたファイルに保存します。
+        
+        ホストプログラムで選択されているテキスト入力形式で保存が行われます。
+        path で指定したファイルパスの拡張子がホストプログラムの音声保存時のファイル形式と一致しない場合、ファイル形式に応じた拡張子が付加されます。
+        ホストプログラムの「音声ファイルパスの指定方法」が「ファイル命名規則」の場合、引数で指定されたパスは無視されます。
+        ホストプログラムでフレーズが編集状態の場合、その編集内容は読み上げに反映されません。
+        ホストプログラムで単語が編集状態の場合、その編集内容は読み上げに反映されません。 
+        """
         self.tts_control.SaveAudioToFile(path)
 
     def set_list_selection_indexes(self, index: int) -> None:
