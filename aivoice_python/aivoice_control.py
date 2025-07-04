@@ -248,7 +248,7 @@ class AIVoiceTTsControl:
 
     def get_voice_preset(self, preset_name: str) -> str:
         """引数で指定された名称のボイスプリセットの各値を JSON 形式で取得します。"""
-        return VoicePreset(json.load(self.tts_control.GetVoicePreset(preset_name)))
+        return VoicePreset(json.loads(self.tts_control.GetVoicePreset(preset_name)))
 
     def initialize(self, service_name: str):
         """APIを初期化します。"""
