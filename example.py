@@ -52,9 +52,10 @@ def main():
 
     # 再生
     play_time = tts_control.get_play_time()
-    tts_control.play()
+    tts_control.save_audio_to_file("output.wav")
+    # tts_control.play()
     # Play()は再生完了を待たないので予め取得した再生時間+α分sleepで待つ
-    time.sleep((play_time + 500) / 1000)
+    # time.sleep((play_time + 500) / 1000)
 
     # A.I.VOICE Editorとの接続を終了する
     tts_control.disconnect()

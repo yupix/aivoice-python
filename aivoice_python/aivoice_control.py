@@ -6,8 +6,16 @@ through its COM API.
 """
 
 from enum import Enum
+import json
 import os
 import clr
+
+try:
+    from typing import Required, TypedDict, List
+except ImportError:
+    # Python < 3.11 のサポート
+    from typing import TypedDict, List
+    from typing_extensions import Required
 
 
 class HostStatus(Enum):
@@ -22,6 +30,35 @@ class TextEditMode(Enum):
     """テキスト入力モード"""
     Text = 0
     List = 1
+
+
+class Style(TypedDict, total=False):
+    """音声スタイルの設定"""
+    Name: str  # スタイル名 (例: "J", "A", "S")
+    Value: float  # スタイル値 (0.0-1.0)
+
+
+class MergedVoice(TypedDict, total=False):
+    """マージされた音声の設定"""
+    BasePitchVoiceName: str  # ベースピッチボイス名
+    MergedVoices: List[dict]  # マージされた音声のリスト
+
+
+class VoicePreset(TypedDict, total=False):
+    """A.I.VOICE ボイスプリセットの設定
+    
+    指定しなかったフィールドはデフォルト値が使用されます。
+    """
+    PresetName: Required[str]  # プリセット名
+    VoiceName: Required[str]  # ボイス名
+    MergedVoiceContainer: MergedVoice  # マージボイス設定
+    Volume: float  # 音量 (0.0-2.0)
+    Speed: float  # 話速 (0.5-4.0)
+    Pitch: float  # 高さ (0.5-2.0)
+    PitchRange: float  # 抑揚 (0.0-2.0)
+    MiddlePause: int  # 短ポーズ時間 (ミリ秒)
+    LongPause: int  # 長ポーズ時間 (ミリ秒)
+    Styles: List[Style]  # スタイル設定のリスト
 
 
 class AIVoiceTTsControl:
@@ -158,9 +195,9 @@ class AIVoiceTTsControl:
         """リスト形式の末尾に行を追加します。"""
         self.tts_control.AddListItem(voice_preset_name, text)
 
-    def add_voice_preset(self, json: str) -> None:
+    def add_voice_preset(self, voice_preset: VoicePreset) -> None:
         """新規ボイスプリセットを作成し JSON 形式で指定された各値を設定します。"""
-        self.tts_control.AddVoicePreset(json)
+        self.tts_control.AddVoicePreset(json.dumps(voice_preset, ensure_ascii=False))
 
     def clear_list_items(self):
         """リスト形式の行をすべて削除します。"""
@@ -211,7 +248,7 @@ class AIVoiceTTsControl:
 
     def get_voice_preset(self, preset_name: str) -> str:
         """引数で指定された名称のボイスプリセットの各値を JSON 形式で取得します。"""
-        return self.tts_control.GetVoicePreset(preset_name)
+        return VoicePreset(json.load(self.tts_control.GetVoicePreset(preset_name)))
 
     def initialize(self, service_name: str):
         """APIを初期化します。"""
@@ -287,9 +324,9 @@ class AIVoiceTTsControl:
         """リスト形式の選択行のボイスプリセット名を設定します。"""
         self.tts_control.SetListVoicePreset(voice_preset_name)
 
-    def set_voice_preset(self, json: str) -> None:
+    def set_voice_preset(self, voice_preset: VoicePreset) -> None:
         """既存のボイスプリセットに JSON 形式で指定された各値を設定します。"""
-        self.tts_control.SetVoicePreset(json)
+        self.tts_control.SetVoicePreset(json.dumps(voice_preset, ensure_ascii=False))
 
     def start_host(self):
         """ホストプログラムを起動します。"""
