@@ -13,7 +13,7 @@ from .aivoice_control import (
     MergedVoice
 )
 
-__version__ = "0.1.1"
+__version__ = "0.1.2"
 __author__ = "yupix"
 __email__ = "yupi0982@outlook.jp"
 

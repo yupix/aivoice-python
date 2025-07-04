@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "aivoice-python"
-version = "0.1.1"
+version = "0.1.2"
 description = "A Python wrapper for A.I.VOICE Editor API"
 readme = "README.md"
 license = {text = "MIT"}
