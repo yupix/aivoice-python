@@ -223,12 +223,8 @@ class AIVoiceTTsControl:
         ホストプログラムへ接続後、10分間 API を介した操作が行われない状態が続くと自動的に接続が解除されます。
         """
         if hasattr(self, 'tts_control'):
-            result = self.tts_control.Connect()
-            if result == 0:
-                print(f"A.I.VOICE Editor ({self.editor_version}) へ接続しました。")
-                return self  # コンテキストマネージャーチェーン用
-            else:
-                raise RuntimeError(f"接続に失敗しました。エラーコード: {result}")
+            self.tts_control.Connect()
+            return self  # コンテキストマネージャーチェーン用
         else:
             raise RuntimeError("TtsControlが初期化されていません")
 
