@@ -203,12 +203,34 @@ class AIVoiceTTsControl:
         """リスト形式の行をすべて削除します。"""
         self.tts_control.ClearListItems()
 
+    def __enter__(self):
+        """コンテキストマネージャー: with文の開始時"""
+        return self
+    
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        """コンテキストマネージャー: with文の終了時"""
+        try:
+            if hasattr(self, 'tts_control') and self.status == HostStatus.Idle:
+                self.disconnect()
+        except Exception as e:
+            # ログに記録するかエラーハンドリング
+            print(f"Warning: Failed to disconnect: {e}")
+        return False  # 例外を再発生させる
+    
     def connect(self):
-        """A.I.VOICE Editor へ接続します。
+        """A.I.VOICE Editorに接続
 
         ホストプログラムへ接続後、10分間 API を介した操作が行われない状態が続くと自動的に接続が解除されます。
         """
-        self.tts_control.Connect()
+        if hasattr(self, 'tts_control'):
+            result = self.tts_control.Connect()
+            if result == 0:
+                print(f"A.I.VOICE Editor ({self.editor_version}) へ接続しました。")
+                return self  # コンテキストマネージャーチェーン用
+            else:
+                raise RuntimeError(f"接続に失敗しました。エラーコード: {result}")
+        else:
+            raise RuntimeError("TtsControlが初期化されていません")
 
     def disconnect(self):
         """ホストプログラムとの接続を解除します。"""
