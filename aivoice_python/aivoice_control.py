@@ -171,9 +171,9 @@ class AIVoiceTTsControl:
             }
             return status_mapping.get(raw_status, HostStatus.NotConnected)
         
-        # 数値の場合はそのまま変換
+        # int/<class 'AI.Talk.Editor.Api.HostStatus'>の場合はintで変換
         try:
-            return HostStatus(raw_status)
+            return HostStatus(int(raw_status))
         except ValueError:
             return HostStatus.NotConnected
 
